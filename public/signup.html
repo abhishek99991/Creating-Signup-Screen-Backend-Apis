@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="signupForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password"
+           placeholder="Password (minimum 8 characters)"
+           minlength="8" maxlength="128" required>
+    <button type="submit">Sign Up</button>
+</form>
+
+<p id="message"></p>
+
+
+<script>
+    
+const signupForm = document.getElementById("signupForm");
+const message = document.getElementById("message");
+
+signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch("/api/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        message.textContent = data.message;
+        message.style.color = response.ok ? "green" : "red";
+
+        if (response.ok) {
+            signupForm.reset();
+        }
+    } catch (error) {
+        message.textContent = "Unable to connect to the server.";
+        message.style.color = "red";
+    }
+});
+
+</script>
+</body>
+</html>
